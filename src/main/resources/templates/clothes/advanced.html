@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>衣類検索（Map・Enum版）</title>
+</head>
+<body>
+
+<h1>衣類検索（Map・Enum版）</h1>
+
+<form th:action="@{/clothes/advanced/search}" method="get">
+
+    <label th:each="genderOption : ${genderMap}">
+        <input type="radio"
+               name="gender"
+               th:value="${genderOption.key}"
+               th:checked="${genderOption.key == gender}">
+        <span th:text="${genderOption.value}"></span>
+    </label>
+
+    <br>
+
+    <select name="color">
+        <option th:each="colorOption : ${colorMap}"
+                th:value="${colorOption.key}"
+                th:text="${colorOption.value}"
+                th:selected="${colorOption.key == color}">
+        </option>
+    </select>
+
+    <br>
+
+    <button type="submit">検索</button>
+</form>
+
+<p th:if="${message}" th:text="${message}"></p>
+
+<table border="1" th:if="${clothesList}">
+    <tr>
+        <th>ジャンル</th>
+        <th>サイズ</th>
+        <th>価格</th>
+    </tr>
+
+    <tr th:each="clothes : ${clothesList}">
+        <td th:text="${clothes.genre}"></td>
+        <td th:text="${clothes.size}"></td>
+        <td th:text="${clothes.price}"></td>
+    </tr>
+</table>
+
+</body>
+</html>
