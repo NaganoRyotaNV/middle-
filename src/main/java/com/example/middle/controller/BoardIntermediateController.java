@@ -14,15 +14,19 @@ import com.example.middle.domain.Article;
 import com.example.middle.domain.Comment;
 import com.example.middle.form.ArticleForm;
 import com.example.middle.form.CommentForm;
+import com.example.middle.repository.ArticleJoinRepository;
 import com.example.middle.repository.ArticleRepository;
 import com.example.middle.repository.CommentRepository;
 
 /**
- * 掲示板を操作するコントローラ.
+ * 中級課題用の掲示板コントローラ.
  */
 @Controller
-@RequestMapping("/board")
-public class BoardController {
+@RequestMapping("/board/intermediate")
+public class BoardIntermediateController {
+
+    @Autowired
+    private ArticleJoinRepository articleJoinRepository;
 
     @Autowired
     private ArticleRepository articleRepository;
@@ -40,8 +44,10 @@ public class BoardController {
     public String index(Model model) {
         model.addAttribute("articleForm", new ArticleForm());
         model.addAttribute("commentForm", new CommentForm());
-        model.addAttribute("articleList", findArticleList());
-        return "board/index";
+        model.addAttribute(
+                "articleList",
+                articleJoinRepository.findAllWithComments());
+        return "board/intermediate";
     }
 
     /**
@@ -55,7 +61,7 @@ public class BoardController {
         Article article = new Article();
         BeanUtils.copyProperties(form, article);
         articleRepository.insert(article);
-        return "redirect:/board";
+        return "redirect:/board/intermediate";
     }
 
     /**
@@ -69,7 +75,7 @@ public class BoardController {
         Comment comment = new Comment();
         BeanUtils.copyProperties(form, comment);
         commentRepository.insert(comment);
-        return "redirect:/board";
+        return "redirect:/board/intermediate";
     }
 
     /**
@@ -82,17 +88,6 @@ public class BoardController {
     public String deleteArticle(@RequestParam Integer articleId) {
         commentRepository.deleteByArticleId(articleId);
         articleRepository.deleteById(articleId);
-        return "redirect:/board";
-    }
-
-    private java.util.List<Article> findArticleList() {
-        java.util.List<Article> articleList = articleRepository.findAll();
-
-        for (Article article : articleList) {
-            article.setCommentList(
-                    commentRepository.findByArticleId(article.getId()));
-        }
-
-        return articleList;
+        return "redirect:/board/intermediate";
     }
 }
