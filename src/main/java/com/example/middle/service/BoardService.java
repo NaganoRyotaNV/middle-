@@ -29,7 +29,14 @@ public class BoardService {
      * @return 記事一覧
      */
     public List<Article> showList() {
-        return articleRepository.findAllWithComments();
+        List<Article> articleList = articleRepository.findAll();
+
+        for (Article article : articleList) {
+            article.setCommentList(
+                    commentRepository.findByArticleId(article.getId()));
+        }
+
+        return articleList;
     }
 
     /**
