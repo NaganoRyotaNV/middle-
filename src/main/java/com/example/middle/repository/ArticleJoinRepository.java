@@ -1,19 +1,18 @@
 package com.example.middle.repository;
 
+import com.example.middle.domain.Article;
+import com.example.middle.domain.Comment;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Repository;
-
-import com.example.middle.domain.Article;
-import com.example.middle.domain.Comment;
 
 /**
  * 記事とコメントを結合して取得するリポジトリ.
@@ -29,28 +28,47 @@ public class ArticleJoinRepository {
      *
      * @return 記事一覧
      */
+
     public List<Article> findAllWithComments() {
         String sql = """
                 SELECT
-                    a.id AS article_id,
-                    a.name AS article_name,
-                    a.content AS article_content,
-                    c.id AS comment_id,
-                    c.name AS comment_name,
-                    c.content AS comment_content,
-                    c.article_id AS comment_article_id
-                FROM
-                    articles AS a
-                LEFT JOIN
-                    comments AS c
-                ON
-                    a.id = c.article_id
-                ORDER BY
-                    a.id DESC,
-                    c.id DESC
+                    a.id AS a_id, a.name AS a_name, a.content AS a_content,
+                    c.id AS c_id, c.name AS c_name, c.content AS c_content
+                FROM articles a
+                LEFT JOIN comments c ON a.id = c.article_id
+                ORDER BY a.id, c.id
                 """;
 
-        return template.query(sql, new ArticleWithCommentsExtractor());
+        return template.query(sql, rs -> {
+            List<Article> articleList = new ArrayList<>();
+            Article currentArticle = null;
+
+            while (rs.next()) {
+                int articleId = rs.getInt("a_id");
+
+                if (currentArticle == null || currentArticle.getId() != articleId) {
+                    currentArticle = new Article();
+                    currentArticle.setId(articleId);
+                    currentArticle.setName(rs.getString("a_name"));
+                    currentArticle.setContent(rs.getString("a_content"));
+                    currentArticle.setCommentList(new ArrayList<>());
+
+                    articleList.add(currentArticle);
+                }
+
+                int commentId = rs.getInt("c_id");
+                if (commentId != 0) {
+                    Comment c = new Comment();
+                    c.setId(commentId);
+                    c.setName(rs.getString("c_name"));
+                    c.setContent(rs.getString("c_content"));
+                    c.setArticleId(articleId);
+
+                    currentArticle.getCommentList().add(c);
+                }
+            }
+            return articleList;
+        });
     }
 
     private static class ArticleWithCommentsExtractor
@@ -96,3 +114,5 @@ public class ArticleJoinRepository {
         }
     }
 }
+
+
