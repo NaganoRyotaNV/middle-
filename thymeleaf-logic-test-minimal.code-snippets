@@ -1,0 +1,141 @@
+{
+  "img-th-src": {
+    "prefix": "img-th-src",
+    "body": [
+      "<img th:src=\"@{/img/${1:1744959430106.jpg}}\" alt=\"${2:画像}\" />"
+    ],
+    "description": "Thymeleafで画像表示。imgタグから始める"
+  },
+  "input-name": {
+    "prefix": "input-name",
+    "body": [
+      "<!-- Controller/Form側のフィールド名と name=\"${1:name}\" を一致させる -->",
+      "<input type=\"${2:text}\" name=\"${1:name}\" />"
+    ],
+    "description": "inputのname属性とController/Formの値がつながることを明示"
+  },
+  "form-post": {
+    "prefix": "form-post",
+    "body": [
+      "<form th:action=\"@{/${1:ex01}/${2:register}}\" method=\"post\">",
+      "  ${0}",
+      "</form>"
+    ],
+    "description": "actionとmethod=post入りフォーム"
+  },
+  "radio-gender": {
+    "prefix": "radio-gender",
+    "body": [
+      "<div>",
+      "  性別:",
+      "  <input type=\"radio\" name=\"${1:gender}\" value=\"男性\" />男性",
+      "  <input type=\"radio\" name=\"${1:gender}\" value=\"女性\" />女性",
+      "</div>"
+    ],
+    "description": "radioはvalueの値が送信される"
+  },
+  "session-user-text": {
+    "prefix": "session-user-text",
+    "body": [
+      "<p>名前：<span th:text=\"${session.user.name}\">dummy</span></p>",
+      "<p>年齢：<span th:text=\"${session.user.age}\">dummy</span></p>",
+      "<p>コメント：<span th:text=\"${session.user.comment}\">dummy</span></p>",
+      "<p>性別：<span th:text=\"${session.user.gender}\">dummy</span></p>",
+      "<p>都道府県：<span th:text=\"${session.user.prefecture}\">dummy</span></p>",
+      "<p>生年月日：<span th:text=\"${session.user.birthday}\">dummy</span></p>"
+    ],
+    "description": "セッションスコープ user のThymeleaf表示"
+  },
+  "th-if-div": {
+    "prefix": "th-if-div",
+    "body": [
+      "<div th:if=\"${${1:condition}}\">",
+      "  ${2:条件がtrueのとき表示}",
+      "</div>"
+    ],
+    "description": "div全体を条件表示"
+  },
+  "th-unless-div": {
+    "prefix": "th-unless-div",
+    "body": [
+      "<div th:unless=\"${${1:condition}}\">",
+      "  ${2:条件がfalseのとき表示}",
+      "</div>"
+    ],
+    "description": "div全体を条件がfalseのとき表示"
+  },
+  "th-if-li": {
+    "prefix": "th-if-li",
+    "body": [
+      "<ul>",
+      "  <li th:if=\"${${1:condition}}\">${2:条件がtrueのとき、このliだけ表示}</li>",
+      "</ul>"
+    ],
+    "description": "li単位で条件表示"
+  },
+  "th-unless-li": {
+    "prefix": "th-unless-li",
+    "body": [
+      "<ul>",
+      "  <li th:unless=\"${${1:condition}}\">${2:条件がfalseのとき、このliだけ表示}</li>",
+      "</ul>"
+    ],
+    "description": "li単位で条件がfalseのとき表示"
+  },
+  "th-each-ul-li": {
+    "prefix": "th-each-ul-li",
+    "body": [
+      "<ul>",
+      "  <li th:each=\"${1:item} : ${${2:itemList}}\">",
+      "    <span th:text=\"${${1:item}.${3:name}}\">dummy</span>",
+      "  </li>",
+      "</ul>"
+    ],
+    "description": "ul/liでListを繰り返し表示"
+  },
+  "th-each-table": {
+    "prefix": "th-each-table",
+    "body": [
+      "<table border=\"1\">",
+      "  <tr>",
+      "    <th>No</th>",
+      "    <th>名前</th>",
+      "    <th>年齢</th>",
+      "  </tr>",
+      "  <tr th:each=\"${1:user}, ${2:status} : ${${3:userList}}\">",
+      "    <td><span th:text=\"${${2:status}.count}\">1</span></td>",
+      "    <td><span th:text=\"${${1:user}.name}\">dummy</span></td>",
+      "    <td><span th:text=\"${${1:user}.age}\">dummy</span></td>",
+      "  </tr>",
+      "</table>"
+    ],
+    "description": "table/trにth:eachを置いて一覧表を作る"
+  },
+  "th-each-div": {
+    "prefix": "th-each-div",
+    "body": [
+      "<div th:each=\"${1:item} : ${${2:itemList}}\">",
+      "  <p th:text=\"${${1:item}.${3:name}}\">dummy</p>",
+      "</div>"
+    ],
+    "description": "div単位でListを繰り返し表示"
+  },
+  "th-if-table-row": {
+    "prefix": "th-if-table-row",
+    "body": [
+      "<tr th:if=\"${${1:condition}}\">",
+      "  <td>${2:条件がtrueのとき、この行を表示}</td>",
+      "</tr>"
+    ],
+    "description": "tableのtr単位で条件表示"
+  },
+  "th-unless-table-row": {
+    "prefix": "th-unless-table-row",
+    "body": [
+      "<tr th:unless=\"${${1:condition}}\">",
+      "  <td>${2:条件がfalseのとき、この行を表示}</td>",
+      "</tr>"
+    ],
+    "description": "tableのtr単位で条件がfalseのとき表示"
+  }
+}
