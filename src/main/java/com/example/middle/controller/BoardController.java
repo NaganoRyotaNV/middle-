@@ -12,7 +12,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 掲示板を操作するコントローラ.
@@ -26,6 +29,9 @@ public class BoardController {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    /** 記事ごとのいいね数. */
+    private final Map<Integer, Integer> likeCountMap = new ConcurrentHashMap<>();
 
     /**
      * 掲示板を表示する.
@@ -79,7 +85,24 @@ public class BoardController {
     public String deleteArticle(@RequestParam Integer articleId) {
         commentRepository.deleteByArticleId(articleId);
         articleRepository.deleteById(articleId);
+        likeCountMap.remove(articleId);
         return "redirect:/board";
+    }
+
+    /**
+     * 記事のいいね数を非同期で増やす.
+     *
+     * @param articleId 記事ID
+     * @return いいね数
+     */
+    @PostMapping("/articles/like")
+    @ResponseBody
+    public Map<String, Integer> likeArticle(@RequestParam Integer articleId) {
+        Integer likeCount = likeCountMap.merge(articleId, 1, Integer::sum);
+
+        Map<String, Integer> result = new HashMap<>();
+        result.put("likeCount", likeCount);
+        return result;
     }
 
     private List<Article> findArticleList() {

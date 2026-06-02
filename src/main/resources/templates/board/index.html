@@ -3,6 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <title>掲示板</title>
+<style>
+    .article-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .article-actions form {
+        margin: 0;
+    }
+
+    .like-count {
+        font-weight: bold;
+    }
+</style>
 </head>
 <body>
 
@@ -37,10 +52,16 @@
         <strong th:text="${article.content}"></strong>
     </p>
 
-    <form th:action="@{/board/articles/delete}" method="post">
-        <input type="hidden" name="articleId" th:value="${article.id}">
-        <button type="submit">記事削除</button>
-    </form>
+    <div class="article-actions">
+        <form th:action="@{/board/articles/delete}" method="post">
+            <input type="hidden" name="articleId" th:value="${article.id}">
+            <button type="submit">記事削除</button>
+        </form>
+        <button class="like-button" type="button"
+                th:data-article-id="${article.id}"
+                th:data-url="@{/board/articles/like}">いいね</button>
+        <span class="like-count" th:data-article-id="${article.id}">0</span>
+    </div>
 
     <br>
 
@@ -81,5 +102,7 @@
     <hr>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script th:src="@{/js/board-like.js}"></script>
 </body>
 </html>
