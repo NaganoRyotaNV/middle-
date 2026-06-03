@@ -7,7 +7,12 @@ $(() => {
   const showAjaxError = (XMLHttpRequest, textStatus, errorThrown) => {
     console.log("XMLHttpRequest : " + XMLHttpRequest.status);
     console.log("textStatus : " + textStatus);
-    console.log("errorThrown : " + (errorThrown && errorThrown.message ? errorThrown.message : errorThrown));
+    console.log(
+      "errorThrown : " +
+        (errorThrown && errorThrown.message
+          ? errorThrown.message
+          : errorThrown),
+    );
   };
 
   const splitAddress = (item) => {
@@ -19,36 +24,38 @@ $(() => {
     return {
       prefecture: prefecture,
       city: city,
-      street: street
+      street: street,
     };
   };
 
   // 課題1：郵便番号から住所を取得する
   $("#get_address_btn").on("click", () => {
     $.ajax({
-      url: "https://zipcoda.net/api",
+      url: "https://zipcoda.net/api/",
       type: "GET",
       dataType: "json",
       data: {
-        zipcode: $("#zipcode").val()
+        zipcode: $("#zipcode").val(),
       },
-      async: true
-    }).done((data) => {
-      console.log(data);
+      async: true,
+    })
+      .done((data) => {
+        console.log(data);
 
-      if (!data.items || data.items.length === 0) {
-        alert("住所が見つかりませんでした。");
-        return;
-      }
+        if (!data.items || data.items.length === 0) {
+          alert("住所が見つかりませんでした。");
+          return;
+        }
 
-      const address = splitAddress(data.items[0]);
-      $("#prefecture").val(address.prefecture);
-      $("#city").val(address.city);
-      $("#street").val(address.street);
-    }).fail((XMLHttpRequest, textStatus, errorThrown) => {
-      alert("正しい結果を得られませんでした。");
-      showAjaxError(XMLHttpRequest, textStatus, errorThrown);
-    });
+        const address = splitAddress(data.items[0]);
+        $("#prefecture").val(address.prefecture);
+        $("#city").val(address.city);
+        $("#street").val(address.street);
+      })
+      .fail((XMLHttpRequest, textStatus, errorThrown) => {
+        alert("正しい結果を得られませんでした。");
+        showAjaxError(XMLHttpRequest, textStatus, errorThrown);
+      });
   });
 
   const checkPassword = () => {
@@ -59,15 +66,17 @@ $(() => {
       contentType: "application/json",
       data: JSON.stringify({
         password: $("#password").val(),
-        confirmationPassword: $("#confirmation_password").val()
+        confirmationPassword: $("#confirmation_password").val(),
       }),
-      async: true
-    }).done((data) => {
-      $("#robustness_message").text(data.robustnessMessage);
-      $("#disagreement_message").text(data.disagreementMessage);
-    }).fail((XMLHttpRequest, textStatus, errorThrown) => {
-      showAjaxError(XMLHttpRequest, textStatus, errorThrown);
-    });
+      async: true,
+    })
+      .done((data) => {
+        $("#robustness_message").text(data.robustnessMessage);
+        $("#disagreement_message").text(data.disagreementMessage);
+      })
+      .fail((XMLHttpRequest, textStatus, errorThrown) => {
+        showAjaxError(XMLHttpRequest, textStatus, errorThrown);
+      });
   };
 
   // 課題2：入力するたびに非同期でパスワードをチェックする
@@ -86,15 +95,22 @@ $(() => {
       type: "POST",
       dataType: "json",
       data: {
-        previousStatusValue: currentStatusValue
+        previousStatusValue: currentStatusValue,
       },
-      async: true
-    }).done((data) => {
-      currentStatusValue = Number(data.statusValue ?? data.currentStatusValue ?? data.nextStatusValue ?? ((currentStatusValue + 1) % statusNames.length));
-      renderStatus();
-    }).fail((XMLHttpRequest, textStatus, errorThrown) => {
-      showAjaxError(XMLHttpRequest, textStatus, errorThrown);
-    });
+      async: true,
+    })
+      .done((data) => {
+        currentStatusValue = Number(
+          data.statusValue ??
+            data.currentStatusValue ??
+            data.nextStatusValue ??
+            (currentStatusValue + 1) % statusNames.length,
+        );
+        renderStatus();
+      })
+      .fail((XMLHttpRequest, textStatus, errorThrown) => {
+        showAjaxError(XMLHttpRequest, textStatus, errorThrown);
+      });
   });
 
   // 課題4：従業員一覧を取得して表に表示する
@@ -103,24 +119,36 @@ $(() => {
       url: "http://153.127.48.168:8080/ex-emp-api/employee/employees",
       type: "GET",
       dataType: "json",
-      async: true
-    }).done((data) => {
-      const employees = data.data.employees;
-      $("#employee_count").text("従業員数：" + data.data.totalEmployeeCount + "名");
-      $("#employee_table_body").empty();
+      async: true,
+    })
+      .done((data) => {
+        const employees = data.data.employees;
+        $("#employee_count").text(
+          "従業員数：" + data.data.totalEmployeeCount + "名",
+        );
+        $("#employee_table_body").empty();
 
-      employees.forEach((employee) => {
-        const imageUrl = "http://153.127.48.168:8080/ex-emp-api/img/" + employee.image;
-        const row = $("<tr>");
+        employees.forEach((employee) => {
+          const imageUrl =
+            "http://153.127.48.168:8080/ex-emp-api/img/" + employee.image;
+          const row = $("<tr>");
 
-        row.append($("<td>").text(employee.id));
-        row.append($("<td>").append($("<img>").attr("src", imageUrl).attr("alt", employee.name).addClass("employee-image")));
-        row.append($("<td>").text(employee.name));
-        row.append($("<td>").text(employee.hireDate));
-        $("#employee_table_body").append(row);
+          row.append($("<td>").text(employee.id));
+          row.append(
+            $("<td>").append(
+              $("<img>")
+                .attr("src", imageUrl)
+                .attr("alt", employee.name)
+                .addClass("employee-image"),
+            ),
+          );
+          row.append($("<td>").text(employee.name));
+          row.append($("<td>").text(employee.hireDate));
+          $("#employee_table_body").append(row);
+        });
+      })
+      .fail((XMLHttpRequest, textStatus, errorThrown) => {
+        showAjaxError(XMLHttpRequest, textStatus, errorThrown);
       });
-    }).fail((XMLHttpRequest, textStatus, errorThrown) => {
-      showAjaxError(XMLHttpRequest, textStatus, errorThrown);
-    });
   });
 });
