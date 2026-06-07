@@ -5,7 +5,4 @@ spring:
     username: postgres
     password: postgres123
   application:
-    name: middle
-server:
-  servlet:
-    context-path: /ex-intermediate
+    name: board-springboot
